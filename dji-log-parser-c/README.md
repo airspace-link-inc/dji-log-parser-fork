@@ -23,7 +23,7 @@ We generate the **C** bindings for the **rust** library and then embed it into o
    ```
 1. Copy the necessary artifacts over to the `flight management` repository. I will assume that both this and `flight-management` have the same parent directory. **IMPORTANT!!! Rename the libdji_log_parser_c.a file to libdji_log_parser.a**. If you don't rename the file `flight-management` wont compile, we have the c bindings determined off a file with that exact name. I have done so in the following example:
    ```sh
-   cp ./bin/x86_64-unknown-linux-gnu/libdji_log_parser_c.a ../flight-management/fileparser/dji/lib/x86_64-unknown-linux-gnu/libdji_log_parser.a
+   cp ./bin/x86_64-unknown-linux-gnu/libdji_log_parser_c.a ../flight-management/fileparser/dji/lib/x86_64-unknown-linux-gnu/release/libdji_log_parser.a
    cp ./dji-log-parser-c/include/dji-log-parser-c.h ../flight-management/fileparser/dji/include/dji-log-parser.h
    ```
 1. Nothing you're done :)
