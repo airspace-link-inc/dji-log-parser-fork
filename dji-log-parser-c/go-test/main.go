@@ -1,8 +1,8 @@
 package main
 
 /*
-#cgo LDFLAGS: -L${SRCDIR}/../../target/debug -ldji_log_parser
-#cgo CFLAGS: -I${SRCDIR}/../include
+#cgo LDFLAGS: -L../../target/debug -ldji_log_parser_c
+#cgo CFLAGS: -I../include
 #include "dji-log-parser-c.h"
 #include <stdlib.h>
 */
@@ -54,6 +54,8 @@ func main() {
 		log.Fatalf("Failed to parse file", errStr)
 	}
 	defer C.c_api_free_string(rawOutput)
+
+	output := C.GoString(rawOutput)
 
 	fmt.Println(rawOutput)
 }
