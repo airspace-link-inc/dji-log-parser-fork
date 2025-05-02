@@ -6,14 +6,15 @@ package main
 #include "dji-log-parser-c.h"
 #include <stdlib.h>
 */
-
 import "C"
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"unsafe"
 )
 
 var (
@@ -42,8 +43,17 @@ func main() {
 	log.Println("Input file size: %d", size)
 
 	cApiKey := C.CString(*apiKey)
-	defer C.free(cApiKey)
+	defer C.free(unsafe.Pointer(cApiKey))
 
-	rawOutput := C.parse_from_bytes()
+	rawOutput := C.parse_from_bytes((*C.uchar)(unsafe.Pointer(cData)), size, cApiKey)
+	if rawOutput == nil {
+		errPtr := C.get_error()
+		errStr := C.GoString(errPtr)
+		C.c_api_free_string(errPtr)
 
+		log.Fatalf("Failed to parse file", errStr)
+	}
+	defer C.c_api_free_string(rawOutput)
+
+	fmt.Println(rawOutput)
 }

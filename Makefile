@@ -12,6 +12,11 @@ $(ARCHITECTURES):
 	docker cp $$ID:/usr/src/myapp/target/$@/release/${OUT_FILE_NAME} ${OUT_PATH}/$@/${OUT_FILE_NAME}; \
 	docker rm $(shell docker ps -a -f status=created -q);
 
+copy-artifacts:
+	cp bin/aarch64-unknown-linux-gnu/${OUT_FILE_NAME} ../flight-management/fileparser/dji/lib/aarch64-unknown-linux-gnu/release/libdji_log_parser.a
+	cp bin/x86_64-unknown-linux-gnu/${OUT_FILE_NAME} ../flight-management/fileparser/dji/lib/x86_64-unknown-linux-gnu/release/libdji_log_parser.a
+	cp ./dji-log-parser-c/include/dji-log-parser-c.h ../flight-management/fileparser/dji/include/dji-log-parser.h
+
 #==============================
 # Meta
 #==============================
