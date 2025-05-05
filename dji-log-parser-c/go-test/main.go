@@ -40,7 +40,7 @@ func main() {
 	defer C.free(cData)
 
 	size := C.size_t(len(buf))
-	log.Println("Input file size: %d", size)
+	log.Println("Input file size: ", size)
 
 	cApiKey := C.CString(*apiKey)
 	defer C.free(unsafe.Pointer(cApiKey))
@@ -51,11 +51,11 @@ func main() {
 		errStr := C.GoString(errPtr)
 		C.c_api_free_string(errPtr)
 
-		log.Fatalf("Failed to parse file", errStr)
+		log.Fatalln("Failed to parse file: ", errStr)
 	}
 	defer C.c_api_free_string(rawOutput)
 
 	output := C.GoString(rawOutput)
 
-	fmt.Println(rawOutput)
+	fmt.Println(output)
 }
