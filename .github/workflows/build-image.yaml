@@ -48,7 +48,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_NAME }}
           tags: |
-            type=sha,format=true
+            type=sha,format=full
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
             type=ref,format=short,value=${{ github.ref }}
             type=version,format=${{ github.sha }}
