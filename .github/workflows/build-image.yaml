@@ -9,8 +9,9 @@ on:
   workflow_dispatch:
 
 env:
+  REGISTRY: ghcr.io
   # The name of the repository/image within ACR.
-  IMAGE_REPO_NAME: dji-log-parser
+  IMAGE_REPO_NAME: airspace-link-inc/dji-log-parser-fork
   # Set the desired platforms
   PLATFORMS: linux/amd64,linux/arm64
 
@@ -30,12 +31,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_RG_ASL_CUS_CREDENTIALS }}
           
-      - name: 🐳 Docker Login to ACR
-        run: |
-          set -euo pipefail
-          access_token=$(az account get-access-token --query accessToken -o tsv)
-          refresh_token=$(curl https://${{env.acr-name}}/oauth2/exchange -v -d "grant_type=access_token&service=${{env.acr-name}}&access_token=$access_token" | jq -r .refresh_token)
-          docker login -u 00000000-0000-0000-0000-000000000000 --password-stdin "${{env.acr-name}}" <<< "$refresh_token"
+      - name: 🐳 Docker Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🔨 Set up QEMU
         # Required to run emulation for ARM/other architectures
@@ -49,10 +50,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_REPO_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_NAME }}
           tags: |
             type=sha,format=true,prefix=
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+            type=ref,format=short,value=${{ github.ref }}
+            type=version,format=v{{ github.sha }}
 
       - name: 🚀 Build and Push Multi-Arch Image
         uses: docker/build-push-action@v5
@@ -69,9 +72,4 @@ jobs:
           secrets: |
             "asl_gha_user=${{ secrets.asl_gha_pat }}"
             "asl_pipeline_read_packages_token=${{ secrets.asl_pipeline_read_packages_token }}"
-
-      - name: Azure Logout
-        if: always()
-        run: >
-          az logout
 
