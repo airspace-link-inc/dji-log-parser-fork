@@ -6,7 +6,9 @@ permissions:
 
 on:
   push:
-    branches: [ "main"]
+    # Only run this workflow when a tag starting with 'v' is pushed
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 env:
@@ -48,10 +50,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_NAME }}
           tags: |
-            type=sha,format=full
+            type=raw,value=${{ github.sha }}
+            type=sha,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
-            type=ref,format=short,value=${{ github.ref }}
-            type=version,format=${{ github.sha }}
+            type=semver,pattern={{version}}
 
       - name: 🚀 Build and Push Multi-Arch Image
         uses: docker/build-push-action@v5
