@@ -16,7 +16,7 @@ env:
   # The name of the repository/image within ACR.
   IMAGE_REPO_NAME: airspace-link-inc/dji-log-parser-fork
   # Set the desired platforms
-  PLATFORMS: linux/amd64,linux/arm64
+  PLATFORMS: linux/amd64,linux/arm64,darwin/arm64
 
 jobs:
   build-and-push:
