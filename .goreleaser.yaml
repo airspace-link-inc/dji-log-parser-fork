@@ -56,6 +56,110 @@ changelog:
       - "^docs:"
       - "^test:"
 
+dockers_v2:
+  # You can have multiple Docker images.
+  - id: {{ .ProjectName }}
+
+    # Path to the Dockerfile (from the project root).
+    #
+    # Default: 'Dockerfile'.
+    # Templates: allowed.
+    dockerfile: "./build/Dockerfile"
+
+    # IDs to filter the binaries/packages.
+    #
+    # Make sure to only include the IDs of binaries you want to `COPY` in your
+    # Dockerfile.
+    #
+    # If you include IDs that don't exist or are not available for the current
+    # architecture being built, the build of the image will be skipped.
+    ids:
+      - mybuild
+      - mynfpm
+
+    # Image names.
+    #
+    # Empty image names are ignored.
+    #
+    # Templates: allowed.
+    images:
+      - "ghcr.io/airspace-link-inc/{{ .ProjectName }}"
+
+    # Tag names.
+    #
+    # Empty tags are ignored.
+    #
+    # Templates: allowed.
+    tags:
+      - "v{{ .Version }}"
+      - "{{ if .IsNightly }}nightly{{ end }}"
+      - "{{ if not .IsNightly }}latest{{ end }}"
+      - "sha-{{ .Commit }}"                         # SHA commit tag
+      - "{{ .Tag }}"                                # Custom Git tag (e.g., "refs/heads/main")
+
+    # If your Dockerfile copies files other than binaries and packages,
+    # you should list them here as well.
+    # Note that GoReleaser will create the same structure inside a temporary
+    # directory, so if you add `foo/bar.json` here, on your Dockerfile you can
+    # `COPY foo/bar.json /whatever.json`.
+    # Also note that the paths here are relative to the directory in which
+    # GoReleaser is being run (usually the repository root directory).
+    # This field does not support wildcards, you can add an entire directory here
+    # and use wildcards when you `COPY`/`ADD` in your Dockerfile.
+    extra_files:
+      - ./dji-log-parser-c/include/dji-log-parser-c.h
+
+    # Labels to be added to the image.
+    #
+    # Items with empty keys or values will be ignored.
+    #
+    # Templates: allowed.
+    labels:
+      "org.opencontainers.image.description": "Rust DJI Log Parser"
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+
+    # Annotations to be added to the image.
+    #
+    # Items with empty keys or values will be ignored.
+    #
+    # Templates: allowed.
+    annotations:
+      "project": "{{.ProjectName}}"
+
+    # Platforms to build.
+    #
+    # Default: [ linux/amd64 linux/arm64 ]
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - darwin/arm64
+
+    # Whether to disable this particular Docker configuration.
+    #
+    # Templates: allowed.
+    # Since: v2.12.7 (unreleased).
+    disable: "{{ .IsSnapshot }}"
+
+    # Whether to create and attach a SBOM to the image.
+    #
+    # Default: 'true'
+    # Templates: allowed.
+    # Since: v2.12.7 (unreleased).
+    sbom: "{{ not .IsNightly }}"
+
+    # Arbitrary flags to pass to the build command.
+    #
+    # Note: use this at your own risk.
+    # Note: flags must have the `=` sign between flag name and value.
+    #
+    # Templates: allowed.
+    flags:
+      - "--ulimit=10"
+
 release:
   footer: >-
 

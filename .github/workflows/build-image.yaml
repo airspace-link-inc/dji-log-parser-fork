@@ -67,7 +67,4 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           cache-from: type=gha # Use GitHub Actions cache for faster builds
           cache-to: type=gha,mode=max
-          secrets: |
-            "asl_gha_user=${{ secrets.asl_gha_pat }}"
-            "asl_pipeline_read_packages_token=${{ secrets.asl_pipeline_read_packages_token }}"
 
