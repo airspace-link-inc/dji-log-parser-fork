@@ -2,11 +2,13 @@
 name: goreleaser
 
 on:
-  pull_request:
-  push:
-    # run only against tags
-    tags:
-      - "v*"
+  #pull_request:
+  #push:
+  #  # run only against tags
+  #  tags:
+  #    - "v*"
+  # Enable manual trigger via GitHub UI.
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
