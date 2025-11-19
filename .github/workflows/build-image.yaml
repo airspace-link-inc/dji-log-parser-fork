@@ -48,10 +48,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_NAME }}
           tags: |
-            type=sha,format=true,prefix=
+            type=sha,format=true
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
             type=ref,format=short,value=${{ github.ref }}
-            type=version,format=v{{ github.sha }}
+            type=version,format=${{ github.sha }}
 
       - name: 🚀 Build and Push Multi-Arch Image
         uses: docker/build-push-action@v5
